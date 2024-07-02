@@ -13,6 +13,53 @@
 | FACE_THRESHOLD | 人脸置信度 | 0.7 |
 | MODEL_TTL | 模型卸载间隔(s) | 0 |
 | LOG_LEVEL | 日志等级 | ERROR |
+### 脚本说明
+- 确保已成功配置docker服务
+- 请在root权限执行
+- 通过`docker ps` 获取正在运行的mt-photos镜像ID
+- 执行 `./up-im-clip.sh <your-container-name> <clip-server-ip port>`(P: `./up-im-clip.sh 1387079e86ad 192.168.3.4:3003`)
+
+
+### 实例compose.yaml
+```
+version: "3"
+
+services:
+  mtphotos:
+    image: mtphotos/mt-photos:latest
+    container_name: mtphotos
+    restart: always
+    ports:
+      - 8063:8063
+    volumes:
+      - /volume1/docker/mtphotos/config:/config
+      - /volume1/docker/mtphotos/upload:/upload
+      - /volume1/photo:/photos
+    environment:
+      - TZ=Asia/Shanghai
+      - LANG=C.UTF-8
+    depends_on:
+      - mtphotos_ai
+  mtphotos_ai:
+    image: ghcr.io/xiaoranqingxue/mt-ai-cpu:v0.1-beta
+    container_name: mt-ai-cpu
+    restart: always
+    ports:
+      - 3003:3003
+    volumes:
+      - /volume1/docker/immich/model-cache:/cache
+    environment:
+      - API_AUTH_KEY=mt_photos_ai_extra
+      - FACE_MODEL_NAME=buffalo_l # antelopev2
+      - CLIP_MODEL_NAME=XLM-Roberta-Large-Vit-B-16Plus
+      - FACE_THRESHOLD=0.7
+      - MODEL_TTL=0
+      - LOG_LEVEL=ERROR
+
+```
+
+
+
 
 ### PPP：
 - 人脸模型效果未做测试，buffalo_l跟antelopev2都可
