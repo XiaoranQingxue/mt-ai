@@ -13,6 +13,8 @@
 | FACE_THRESHOLD | 人脸置信度 | 0.7 |
 | MODEL_TTL | 模型卸载间隔(s) | 0 |
 | LOG_LEVEL | 日志等级 | ERROR |
+
+**mtphotos中，人脸置信度建议修改为0.7，人物匹配差异值建议修改为0.5左右！**
 ### 脚本说明
 - 确保已成功配置docker服务
 - 请在root权限执行
