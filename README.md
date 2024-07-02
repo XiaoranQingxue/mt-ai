@@ -17,7 +17,8 @@
 - 确保已成功配置docker服务
 - 请在root权限执行
 - 通过`docker ps` 获取正在运行的mt-photos镜像ID
-- 执行 `./up-im-clip.sh <your-container-name> <clip-server-ip port>`(P: `./up-im-clip.sh 1387079e86ad 192.168.3.4:3003`)
+- 参数说明：1. 容器ID， 2. clip服务地址 3. 向量长度，默认640 请按选择的clip模型正确修改
+- 执行 `./up-im-clip.sh <your-container-name> <clip-server-ip port> <vec_length -640>`(P: `./up-im-clip.sh 1387079e86ad 192.168.3.4:3003 640`)
 
 
 ### 实例compose.yaml
