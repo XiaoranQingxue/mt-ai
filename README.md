@@ -44,7 +44,7 @@ services:
     depends_on:
       - mtphotos_ai
   mtphotos_ai:
-    image: ghcr.io/xiaoranqingxue/mt-ai-cpu:v0.1-beta
+    image: ghcr.io/xiaoranqingxue/mt-ai-cpu:latest
     container_name: mt-ai-cpu
     restart: always
     ports:
