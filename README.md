@@ -14,7 +14,7 @@
 | MODEL_TTL | 模型卸载间隔(s) | 0 |
 | LOG_LEVEL | 日志等级 | ERROR |
 
-**mtphotos中，人脸置信度建议修改为0.7，人物匹配差异值建议修改为0.5左右！**
+**mtphotos中，人脸置信度建议修改为~~0.7~~0.55，人物匹配差异值建议修改为~~0.5~~0.35左右！**
 ### 脚本说明
 - 确保已成功配置docker服务
 - 请在root权限执行
@@ -62,14 +62,15 @@ services:
 ```
 
 
-
+### v0.9
+修复clip/img返回结果中出现的以科学计数法存在的数字
 
 ### PPP：
 - 人脸模型效果未做测试，buffalo_l跟antelopev2都可
 - mtphotos 默认CLIP向量长度为512，暂时未提供修改长度选项，所有需要执行脚本以修改向量长度（脚本未做大量测试，请自行判断可行性，后果自负）
 - ~~未实现 OCR 功能，默认返回"",因为我用不到……~~ 增加使用mtphotos自带OCR
 - 只需人脸时，无需执行脚本，直接部署即可
-
+- 不给openvino镜像传入IGPU相关参数时，会自动降级会CPU
 
 ### 效果自测，可联系
 <img src="./1719887659169.jpg" width="150px"><img src="./mm_facetoface_collect_qrcode_1719888178476.png" width="150px"><img src="./mmqrcode1719888085154.png" width="150px">
