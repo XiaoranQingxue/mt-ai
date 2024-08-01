@@ -41,7 +41,7 @@ def get_new_vec(text):
     headers = {'Content-Type': 'application/json', 'api-key': API_KEY}
     body = {'text': text}
     response = requests.post(API_URL, headers=headers, data=json.dumps(body))
-    return response.json()['result']
+    return list(map(float, response.json()['result']))
 
 # 连接到 PostgreSQL 数据库（不使用密码）
 conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER)
@@ -50,15 +50,18 @@ cur = conn.cursor()
 def check_and_update_vec(table_name):
     cur.execute(f"SELECT id, vec FROM {table_name}")
     rows = cur.fetchall()
+    if len(rows)>0:
+        vec = json.loads(rows[0][1])
+        if len(vec) == $VEC_LEN:
+            logger.info(f'{table_name} vec长度正常')
+            return
+    cur.execute(f"ALTER TABLE {table_name} ADD COLUMN new_vec vector($VEC_LEN)")
     for row_id, vec in rows:
         vec = json.loads(vec)
-        if len(vec) != $VEC_LEN:
-            vec = (vec + [0] * $VEC_LEN)[:$VEC_LEN]
-            cur.execute(f"UPDATE {table_name} SET vec = %s WHERE id = %s", (vec, row_id))
-        else:
-            logger.info(f'{table_name} {row_id} vec长度正常')
-            return
-    cur.execute(f"ALTER TABLE {table_name} ALTER COLUMN vec TYPE vector($VEC_LEN)")
+        vec = (vec + [0] * $VEC_LEN)[:$VEC_LEN]
+        cur.execute(f"UPDATE {table_name} SET new_vec = %s WHERE id = %s", (vec, row_id))
+    cur.execute(f"ALTER TABLE {table_name} DROP COLUMN vec;")
+    cur.execute(f"ALTER TABLE {table_name} RENAME COLUMN new_vec TO vec;")
     conn.commit()
     logger.info(f'{table_name} vec成功修改为$VEC_LEN')
 
