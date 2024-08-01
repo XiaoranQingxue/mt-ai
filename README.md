@@ -60,17 +60,70 @@ services:
       - LOG_LEVEL=ERROR
 
 ```
+### 实例compose.yaml (iGPU)
+```
+version: "3"
 
+services:
+  mtphotos:
+    image: mtphotos/mt-photos:latest
+    container_name: mtphotos
+    restart: always
+
+    ports:
+      - 8063:8063
+    volumes:
+      - /volume1/docker/mtphotos/config:/config
+      - /volume1/docker/mtphotos/upload:/upload
+      - /volume1/photo:/photos
+      # 个人文件夹路径
+    environment:
+      - TZ=Asia/Shanghai
+      - LANG=C.UTF-8
+    depends_on:
+      - mtphotos_ai
+  mtphotos_ai:
+    image: ghcr.io/xiaoranqingxue/mt-ai-openvino:latest
+    container_name: mt-ai-openvino
+    device_cgroup_rules:
+      - 'c 189:* rmw'
+    devices:
+      - /dev/dri:/dev/dri
+    restart: always
+
+    ports:
+      - 3003:3003
+    volumes:
+      - /dev/bus/usb:/dev/bus/usb
+      - /volume1/docker/immich/model-cache:/cache
+    environment:
+      - DEVICE=/dev/dri/renderD128
+      - API_AUTH_KEY=mt_photos_ai_extra
+      - FACE_MODEL_NAME=antelopev2 # antelopev2,buffalo_l
+      - CLIP_MODEL_NAME=XLM-Roberta-Large-Vit-B-16Plus #nllb-clip-base-siglip__mrl #XLM-Roberta-Large-Vit-B-16Plus
+      - FACE_THRESHOLD=0.45
+      - MODEL_TTL=300
+      - LOG_LEVEL=ERROR
+
+```
 
 ### v0.9
 修复clip/img返回结果中出现的以科学计数法存在的数字
+
+### v1.0
+feat: 同步immich最新代码，增加额外的clip模型
+fix:  修改脚本中的调整向量长度逻辑，修复v0.9引入的返回结果类型不匹配问题
+
+
 
 ### PPP：
 - 人脸模型效果未做测试，buffalo_l跟antelopev2都可
 - mtphotos 默认CLIP向量长度为512，暂时未提供修改长度选项，所有需要执行脚本以修改向量长度（脚本未做大量测试，请自行判断可行性，后果自负）
 - ~~未实现 OCR 功能，默认返回"",因为我用不到……~~ 增加使用mtphotos自带OCR
+- OCR有已知内存泄漏问题，暂时无法解决；如果内存较少或长时间运行OCR导致内存溢出，请自行重启服务，或者设置MODEL_TTL参数，定时重启服务
 - 只需人脸时，无需执行脚本，直接部署即可
 - 不给openvino镜像传入IGPU相关参数时，会自动降级会CPU
+
 
 ### 效果自测，可联系
 <img src="./1719887659169.jpg" width="150px"><img src="./mm_facetoface_collect_qrcode_1719888178476.png" width="150px"><img src="./mmqrcode1719888085154.png" width="150px">
