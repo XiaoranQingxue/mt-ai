@@ -3,6 +3,7 @@
 
 使用immich开源的人脸及clip，供个人mt-photos使用
 
+## ！！！ 修复V1.2出现的clip错误 ！！！
 
 ### docker ENV 说明
 
