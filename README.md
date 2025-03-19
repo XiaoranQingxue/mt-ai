@@ -14,6 +14,8 @@
 | FACE_THRESHOLD | 人脸置信度 | 0.7 |
 | MODEL_TTL | 模型卸载间隔(s) | 0 |
 | LOG_LEVEL | 日志等级 | ERROR |
+|INTEL_DEVICE_NAME|intel设备名|CPU|
+
 
 **mtphotos中，人脸置信度建议修改为~~0.7~~0.55，人物匹配差异值建议修改为~~0.5~~0.35左右！**
 ### 脚本说明
@@ -60,6 +62,7 @@ services:
       - MODEL_TTL=0
       - LOG_LEVEL=ERROR
 
+
 ```
 ### 实例compose.yaml (iGPU)
 ```
@@ -105,7 +108,7 @@ services:
       - FACE_THRESHOLD=0.45
       - MODEL_TTL=300
       - LOG_LEVEL=ERROR
-
+      - INTEL_DEVICE_NAME=CPU
 ```
 
 ### v0.9
@@ -115,7 +118,9 @@ services:
 feat: 同步immich最新代码，增加额外的clip模型
 fix:  修改脚本中的调整向量长度逻辑，修复v0.9引入的返回结果类型不匹配问题
 
-
+### v1.4
+feat: 同步immich最新代码
+feat: openvino版本增加GPU支持，通过INTEL_DEVICE_NAME传递，默认为CPU，支持GPU GPU.1 (核显效率很差，不如CPU)
 
 ### PPP：
 - 人脸模型效果未做测试，buffalo_l跟antelopev2都可
